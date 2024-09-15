@@ -17,7 +17,7 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] internal static IPluginLog PluginLog { get; private set; } = null!;
 
     private const string CommandName = "/modset";
-    private const string CommandHelpMessage = "Usage: /modset [Collection Name or Guid] [Mod Directory] [Mod Name] [Setting Name]( [Setting Value])*";
+    private const string CommandHelpMessage = "Usage: /modset [Collection Name or Guid] [Mod Directory] [Mod Name] [Setting Name] =( [Setting Value])*";
 
     ICallGateSubscriber<Dictionary<Guid, string>> GetCollectionsSubscriber { get; init; }
 
@@ -49,25 +49,35 @@ public sealed class Plugin : IDalamudPlugin
     private void OnCommand(string command, string args)
     {
         var parsedArgs = Arguments.SplitCommandLine(args);
-        if (parsedArgs.Length >= 4)
+        if (parsedArgs.Length >= 5)
         {
             var collectionNameOrGuid = parsedArgs[0];
             var modDir = parsedArgs[1];
             var modName = parsedArgs[2];
             var settingName = parsedArgs[3];
-            var settingValueOrValues = parsedArgs[4..];
+            var assignmentOperator = parsedArgs[4];
+            var settingValueOrValues = parsedArgs[5..];
             try
             {
                 var collectionGuid = ParseOrRetrieveCollectionGuid(collectionNameOrGuid);
 
                 PenumbraApiEc errorCode;
-                if (settingValueOrValues.Length != 1)
+
+                //TODO: Add support for += and -= based on current setting values
+                if (assignmentOperator == "=")
                 {
-                    errorCode = (PenumbraApiEc)TrySetModSettingsSubscriber.InvokeFunc(collectionGuid, modDir, modName, settingName, settingValueOrValues);
+                    if (settingValueOrValues.Length != 1)
+                    {
+                        errorCode = (PenumbraApiEc)TrySetModSettingsSubscriber.InvokeFunc(collectionGuid, modDir, modName, settingName, settingValueOrValues);
+                    }
+                    else
+                    {
+                        errorCode = (PenumbraApiEc)TrySetModSettingSubscriber.InvokeFunc(collectionGuid, modDir, modName, settingName, settingValueOrValues[0]);
+                    }
                 } 
                 else
                 {
-                    errorCode = (PenumbraApiEc)TrySetModSettingSubscriber.InvokeFunc(collectionGuid, modDir, modName, settingName, settingValueOrValues[0]);
+                    throw new ArgumentException($"Unsupported assignment operator '{assignmentOperator}'");
                 }
 
                 switch (errorCode)
