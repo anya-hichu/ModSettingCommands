@@ -1,5 +1,7 @@
 # ModSettingCommands
 
+Installable using my custom repository (https://github.com/anya-hichu/DalamudPluginRepo) or from compiled archives.
+
 ## Usage
 
 `/modset [Collection Name or Guid] [Mod Directory] [Mod Name] [Setting Name] =( [Setting Value])*`
