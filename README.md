@@ -11,24 +11,24 @@ Installable using my custom repository (https://github.com/anya-hichu/DalamudPlu
 ### Stateless
 
 Set option in group (exclusive):
-`/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack = "032 [OCN] Click Click Flash (Hdance)"` -
+- `/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack = "032 [OCN] Click Click Flash (Hdance)"`
 
 Set options in group (exclusive):
-`/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack = "032 [OCN] Click Click Flash (Hdance)" "033 [ChaotixFox] RGB Cheering (Cheer-on)"`
+- `/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack = "032 [OCN] Click Click Flash (Hdance)" "033 [ChaotixFox] RGB Cheering (Cheer-on)"`
 
 Unset all options in group:
-`/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack =`
+- `/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack =`
 
 ### Stateful
 
 Set option in group:
-`/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack += "032 [OCN] Click Click Flash (Hdance)"`
+- `/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack += "032 [OCN] Click Click Flash (Hdance)"`
 
 Set options in group:
-`/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack += "032 [OCN] Click Click Flash (Hdance)" "033 [ChaotixFox] RGB Cheering (Cheer-on)"`
+- `/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack += "032 [OCN] Click Click Flash (Hdance)" "033 [ChaotixFox] RGB Cheering (Cheer-on)"`
 
 Unset option in group:
-`/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack -= "032 [OCN] Click Click Flash (Hdance)"`
+- `/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack -= "032 [OCN] Click Click Flash (Hdance)"`
 
 Unset options in group:
-`/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack -= "032 [OCN] Click Click Flash (Hdance)" "033 [ChaotixFox] RGB Cheering (Cheer-on)"`
+- `/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack -= "032 [OCN] Click Click Flash (Hdance)" "033 [ChaotixFox] RGB Cheering (Cheer-on)"`
