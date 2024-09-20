@@ -17,13 +17,12 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] internal static IPluginLog PluginLog { get; private set; } = null!;
 
     private const string CommandName = "/modset";
-    private const string CommandHelpMessage = "Usage: /modset [Collection Name or Guid] [Mod Directory] [Mod Name] [Setting Name] =( [Setting Value])*";
+    private const string CommandHelpMessage = "Usage: /modset [Collection Name or Guid] [Mod Directory] [Mod Name] [Setting Name] (=|+=|-=)( [Setting Value])*";
 
-    ICallGateSubscriber<Dictionary<Guid, string>> GetCollectionsSubscriber { get; init; }
-
-    ICallGateSubscriber<Guid, string, string, string, string, int> TrySetModSettingSubscriber { get; init; }
-    ICallGateSubscriber<Guid, string, string, string, IReadOnlyList<string>, int> TrySetModSettingsSubscriber { get; init; }
-
+    private ICallGateSubscriber<Dictionary<Guid, string>> GetCollectionsSubscriber { get; init; }
+    private ICallGateSubscriber<Guid, string, string, string, string, int> TrySetModSettingSubscriber { get; init; }
+    private ICallGateSubscriber<Guid, string, string, string, IReadOnlyList<string>, int> TrySetModSettingsSubscriber { get; init; }
+    private ICallGateSubscriber<Guid, string, string, bool, (PenumbraApiEc, (bool, int, Dictionary<string, List<string>>, bool)?)> GetCurrentModSettings { get; init; }
 
     public Plugin()
     {
@@ -31,6 +30,7 @@ public sealed class Plugin : IDalamudPlugin
 
         TrySetModSettingSubscriber = PluginInterface.GetIpcSubscriber<Guid, string, string, string, string, int>("Penumbra.TrySetModSetting.V5");
         TrySetModSettingsSubscriber = PluginInterface.GetIpcSubscriber<Guid, string, string, string, IReadOnlyList<string>, int>("Penumbra.TrySetModSettings.V5");
+        GetCurrentModSettings = PluginInterface.GetIpcSubscriber<Guid, string, string, bool, (PenumbraApiEc, (bool, int, Dictionary<string, List<string>>, bool)?)>("Penumbra.GetCurrentModSettings.V5");
 
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
@@ -63,9 +63,11 @@ public sealed class Plugin : IDalamudPlugin
 
                 PenumbraApiEc errorCode;
 
-                //TODO: Add support for += and -= based on current setting values
+                var isUnionOperator = assignmentOperator == "+=";
+                var isExceptOperator = assignmentOperator == "-=";
                 if (assignmentOperator == "=")
                 {
+                    // Stateless
                     if (settingValueOrValues.Length != 1)
                     {
                         errorCode = (PenumbraApiEc)TrySetModSettingsSubscriber.InvokeFunc(collectionGuid, modDir, modName, settingName, settingValueOrValues);
@@ -74,7 +76,40 @@ public sealed class Plugin : IDalamudPlugin
                     {
                         errorCode = (PenumbraApiEc)TrySetModSettingSubscriber.InvokeFunc(collectionGuid, modDir, modName, settingName, settingValueOrValues[0]);
                     }
-                } 
+                }
+                else if (isUnionOperator || isExceptOperator)
+                {
+                    // Stateful
+                    var output = GetCurrentModSettings.InvokeFunc(collectionGuid, modDir, modName, true);
+                    var outputErrorCode = output.Item1;
+                    if (output.Item1 == PenumbraApiEc.Success)
+                    {
+                        var currentSettings = output.Item2!.Value.Item3;
+                        if (currentSettings != null)
+                        {
+                            var currentSettingValues = currentSettings.GetValueOrDefault(settingName, []);
+
+                            var newSettings = currentSettingValues;
+                            if (isUnionOperator)
+                            {
+                                newSettings = currentSettingValues.Union(settingValueOrValues).ToList();
+                            }
+                            else if (isExceptOperator)
+                            {
+                                newSettings = currentSettingValues.Except(settingValueOrValues).ToList();
+                            }
+                            errorCode = (PenumbraApiEc)TrySetModSettingsSubscriber.InvokeFunc(collectionGuid, modDir, modName, settingName, newSettings);
+                        }
+                        else
+                        {
+                            errorCode = PenumbraApiEc.NothingChanged;
+                        }
+                    }
+                    else
+                    {
+                        errorCode = outputErrorCode;
+                    }
+                }
                 else
                 {
                     throw new ArgumentException($"Unsupported assignment operator '{assignmentOperator}'");
@@ -98,14 +133,7 @@ public sealed class Plugin : IDalamudPlugin
                         ChatGui.PrintError($"Couldn't find option group with name '{settingName}'");
                         break;
                     case PenumbraApiEc.OptionMissing:
-                        if (settingValueOrValues.Length > 1)
-                        {
-                            ChatGui.PrintError($"Couldn't find all options with names {string.Join(", ", settingValueOrValues.Select(v => $"'{v}'"))}");
-                        } 
-                        else
-                        {
-                            ChatGui.PrintError($"Couldn't find option with name '{settingValueOrValues[0]}'");
-                        }
+                        ChatGui.PrintError($"Couldn't find all option with name(s): '{string.Join(", ", settingValueOrValues.Select(v => $"'{v}'"))}'");
                         break;
                     default:
                         ChatGui.PrintError($"Failed to change setting(s) with error '{errorCode}'");

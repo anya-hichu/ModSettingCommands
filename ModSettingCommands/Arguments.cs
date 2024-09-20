@@ -10,7 +10,7 @@ namespace ModSettingCommands;
 /// </summary>
 public class Arguments
 {
-    private static readonly char[] SEPARATOR = ['\n'];
+    private static readonly char CUSTOM_SEPARATOR = '\n';
 
     /// <summary>
     /// Splits the command line. When main(string[] args) is used escaped quotes (ie a path "c:\folder\")
@@ -35,7 +35,7 @@ public class Arguments
             }
         }
 
-        var toReturn = translatedArguments.ToString().Split(SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
+        var toReturn = translatedArguments.ToString().Split(new[] { CUSTOM_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries);
         for (var i = 0; i < toReturn.Length; i++)
         {
             toReturn[i] = RemoveMatchingQuotes(toReturn[i]);
