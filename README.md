@@ -43,6 +43,7 @@ Flags:
  - `-?`: verbose mode - display in your local chatlog any text (including commands) that are sent to the server
  - `-!`: dry run - the same as verbose mode, except nothing is actually sent to the server
  - `-$`: abort the currently running macro (by using the /macrocancel command)
+ - `-e`: check mod is enabled
 
 (inspired by https://github.com/PrincessRTFM/TinyCommands)
 
