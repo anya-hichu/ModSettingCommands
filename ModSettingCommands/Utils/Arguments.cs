@@ -3,7 +3,7 @@
 using System;
 using System.Text;
 
-namespace ModSettingCommands;
+namespace ModSettingCommands.Utils;
 
 /// <summary>
 /// Arguments class

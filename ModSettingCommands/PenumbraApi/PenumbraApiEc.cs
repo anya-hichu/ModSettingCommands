@@ -1,6 +1,6 @@
 // Source: https://github.com/Ottermandias/Penumbra.Api/blob/97e9f427406f82a59ddef764b44ecea654a51623/Enums/PenumbraApiEc.cs
 
-namespace ModSettingCommands;
+namespace ModSettingCommands.PenumbraApi;
 
 /// <summary>
 /// Error codes returned by some Penumbra.Api calls.
