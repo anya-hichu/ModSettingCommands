@@ -49,5 +49,5 @@ Flags:
 ### Examples
 
 - `/ifmodset -e -$ Self "Starlit" "Starlit" ; /hdance`
-- `/ifmodset -e -$ {0} "Starlit" "Starlit" "Music Type" == "Original" ; "/hdance"`
-- `/ifmodset -e -$ {0} "[JULIExT] Noona" "[JULIExT] Noona" "Pose Option" == "[Sit 02] Ears ON (wiggles)" ; "/groundsit [wait.1]" "/dpose 2"`
+- `/ifmodset -e -$ Self "Starlit" "Starlit" "Music Type" == "Original" ; "/hdance"`
+- `/ifmodset -e -$ Self "[JULIExT] Noona" "[JULIExT] Noona" "Pose Option" == "[Sit 02] Ears ON (wiggles)" ; "/groundsit [wait.1]" "/dpose 2"`
