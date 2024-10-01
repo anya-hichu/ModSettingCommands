@@ -10,29 +10,28 @@ Installable using my custom repository (https://github.com/anya-hichu/DalamudPlu
 
 #### Stateless
 
-##### Set option in group (exclusive)
-`/modset Self "Modpacks" Eorzean-Nightlife-V2 Party-Pack = "032 [OCN] Click Click Flash (Hdance)"` -
+Set option in group (exclusive):
+- `/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack = "032 [OCN] Click Click Flash (Hdance)"`
 
-##### Set options in group (exclusive)
-`/modset Self "Modpacks" Eorzean-Nightlife-V2 Party-Pack = "032 [OCN] Click Click Flash (Hdance)" "033 [ChaotixFox] RGB Cheering (Cheer-on)"`
+Set options in group (exclusive):
+- `/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack = "032 [OCN] Click Click Flash (Hdance)" "033 [ChaotixFox] RGB Cheering (Cheer-on)"`
 
-##### Unset all options in group
-`/modset Self "Modpacks" Eorzean-Nightlife-V2 Party-Pack =`
+Unset all options in group:
+- `/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack =`
 
 #### Stateful
 
 ##### Set option in group
-`/modset Self "Modpacks" Eorzean-Nightlife-V2 Party-Pack += "032 [OCN] Click Click Flash (Hdance)"`
+`/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack += "032 [OCN] Click Click Flash (Hdance)"`
 
 ##### Set options in group
-`/modset Self "Modpacks" Eorzean-Nightlife-V2 Party-Pack += "032 [OCN] Click Click Flash (Hdance)" "033 [ChaotixFox] RGB Cheering (Cheer-on)"`
+`/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack += "032 [OCN] Click Click Flash (Hdance)" "033 [ChaotixFox] RGB Cheering (Cheer-on)"`
 
 ##### Unset option in group
-`/modset Self "Modpacks" Eorzean-Nightlife-V2 Party-Pack -= "032 [OCN] Click Click Flash (Hdance)"`
+`/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack -= "032 [OCN] Click Click Flash (Hdance)"`
 
 ##### Unset options in group
-`/modset Self "Modpacks" Eorzean-Nightlife-V2 Party-Pack -= "032 [OCN] Click Click Flash (Hdance)" "033 [ChaotixFox] RGB Cheering (Cheer-on)"`
-
+`/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack -= "032 [OCN] Click Click Flash (Hdance)" "033 [ChaotixFox] RGB Cheering (Cheer-on)"`
 
 ## Ifmodset command
 
@@ -50,4 +49,5 @@ Flags:
 ### Examples
 
 - `/ifmodset -e -$ Self "Starlit" "Starlit" ; /hdance`
-- `/ifmodset -e -$ {0} "[JULIExT] Noona" "[JULIExT] Noona" "Pose Option" == "[Sit 02] Ears ON (wiggles)" ; /groundsit`
+- `/ifmodset -e -$ {0} "Starlit" "Starlit" "Music Type" == "Original" ; "/hdance"`
+- `/ifmodset -e -$ {0} "[JULIExT] Noona" "[JULIExT] Noona" "Pose Option" == "[Sit 02] Ears ON (wiggles)" ; "/groundsit [wait.1]" "/dpose 2"`
