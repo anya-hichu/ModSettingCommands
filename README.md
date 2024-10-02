@@ -37,7 +37,7 @@ Unset all options in group:
 
 `/ifmodset (-?|-!|-$|-e)? [Collection Name or Guid] [Mod Directory] [Mod Name]( [Setting Name] ==( [Setting Value])*)? ;( [Command])+`
 
-`<` and `>` special characters have to be substitued in commands respectively with `[` and `]` (escaping is done by doubling `[` or `]`)
+`<` and `>` special characters have to be substituted in commands with respectively `[` and `]` (escaping is done by doubling `[` or `]`)
 
 Flags:
  - `-?`: verbose mode - display in your local chatlog any text (including commands) that are sent to the server
