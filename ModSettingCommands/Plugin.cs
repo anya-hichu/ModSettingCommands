@@ -2,7 +2,6 @@ using Dalamud.Game;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using ModSettingCommands.Chat;
 using ModSettingCommands.Commands;
 
 namespace ModSettingCommands;
@@ -14,19 +13,14 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] internal static IChatGui ChatGui { get; private set; } = null!;
     [PluginService] internal static IPluginLog PluginLog { get; private set; } = null!;
     [PluginService] internal static ISigScanner SigScanner { get; private set; } = null!;
-    [PluginService] internal static IFramework Framework { get; private set; } = null!;
 
-    private ChatSender ChatSender { get; init; }
     private ModSetCommand ModSetCommand { get; init; }
     private IfModSetCommand IfModSetCommand { get; init; }
 
     public Plugin()
     {
-        var chatServer = new ChatServer(SigScanner);
-
-        ChatSender = new(chatServer, Framework);
         ModSetCommand = new(ChatGui, CommandManager, PluginInterface, PluginLog);
-        IfModSetCommand = new(ChatGui, ChatSender, chatServer, CommandManager, PluginInterface, PluginLog);
+        IfModSetCommand = new(ChatGui, new(SigScanner), CommandManager, PluginInterface, PluginLog);
 
         PluginInterface.UiBuilder.OpenConfigUi += Noop;
         PluginInterface.UiBuilder.OpenMainUi += Noop;
@@ -36,7 +30,6 @@ public sealed class Plugin : IDalamudPlugin
     {
         IfModSetCommand.Dispose();
         ModSetCommand.Dispose();
-        ChatSender.Dispose();
     }
 
     private static void Noop() { }

@@ -2,7 +2,7 @@ using Dalamud.Game.Command;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
 using Dalamud.Plugin.Services;
-using ModSettingCommands.PenumbraApi;
+using ModSettingCommands.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,20 +1,18 @@
 using Dalamud.Plugin.Services;
 using Dalamud.Plugin;
 using ModSettingCommands.Utils;
-using ModSettingCommands.PenumbraApi;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using ModSettingCommands.Chat;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace ModSettingCommands.Commands;
 
-public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, ChatServer chatServer, ICommandManager commandManager, IDalamudPluginInterface pluginInterface, IPluginLog pluginLog) : BaseModSetCommand(COMMAND, COMMAND_HELP_MESSAGE, commandManager, pluginInterface)
+public partial class IfModSetCommand(IChatGui chatGui, ChatServer chatServer, ICommandManager commandManager, IDalamudPluginInterface pluginInterface, IPluginLog pluginLog) : BaseModSetCommand(COMMAND, COMMAND_HELP_MESSAGE, commandManager, pluginInterface)
 {
-    private static readonly int DEFAULT_INTERVAL = 20;
+    private static readonly int DEFAULT_MESSAGE_INTERVAL_MS = 20;
 
     private static readonly string OPEN_TAG = "<";
     private static readonly string CLOSE_TAG = ">";
@@ -40,7 +38,6 @@ public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, Ch
     private static readonly string ABORT_COMMAND = "/macrocancel";
 
     private IChatGui ChatGui { get; init; } = chatGui;
-    private ChatSender ChatSender { get; init; } = chatSender;
     private ChatServer ChatServer { get; init; } = chatServer;
     private IPluginLog PluginLog { get; init; } = pluginLog;
 
@@ -134,7 +131,7 @@ public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, Ch
 
                                     if (!isDryRun)
                                     {
-                                        ChatSender.Enqueue(commandWithoutWait);
+                                        ChatServer.SendMessage(commandWithoutWait);
                                     }
 
                                     if (waitTimeMatch.Success)
@@ -145,7 +142,7 @@ public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, Ch
                                     } 
                                     else
                                     {
-                                        Thread.Sleep(DEFAULT_INTERVAL);
+                                        Thread.Sleep(DEFAULT_MESSAGE_INTERVAL_MS);
                                     }
                                 }
                             });

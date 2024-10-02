@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace ModSettingCommands.Chat;
+namespace ModSettingCommands.Utils;
 
 /// <summary>
 /// A class containing chat functionality
