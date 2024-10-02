@@ -7,10 +7,11 @@ using System;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Threading;
+using ModSettingCommands.Chat;
 
 namespace ModSettingCommands.Commands;
 
-public partial class IfModSetCommand(IChatGui chatGui, ChatServer chatServer, ICommandManager commandManager, IDalamudPluginInterface pluginInterface, IPluginLog pluginLog) : BaseModSetCommand(COMMAND, COMMAND_HELP_MESSAGE, commandManager, pluginInterface)
+public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, ChatServer chatServer, ICommandManager commandManager, IDalamudPluginInterface pluginInterface, IPluginLog pluginLog) : BaseModSetCommand(COMMAND, COMMAND_HELP_MESSAGE, commandManager, pluginInterface)
 {
     private static readonly int DEFAULT_MESSAGE_INTERVAL_MS = 20;
 
@@ -38,6 +39,7 @@ public partial class IfModSetCommand(IChatGui chatGui, ChatServer chatServer, IC
     private static readonly string ABORT_COMMAND = "/macrocancel";
 
     private IChatGui ChatGui { get; init; } = chatGui;
+    private ChatSender ChatSender { get; init; } = chatSender;
     private ChatServer ChatServer { get; init; } = chatServer;
     private IPluginLog PluginLog { get; init; } = pluginLog;
 
@@ -131,7 +133,7 @@ public partial class IfModSetCommand(IChatGui chatGui, ChatServer chatServer, IC
 
                                     if (!isDryRun)
                                     {
-                                        ChatServer.SendMessage(commandWithoutWait);
+                                        ChatSender.Enqueue(commandWithoutWait);
                                     }
 
                                     if (waitTimeMatch.Success)
