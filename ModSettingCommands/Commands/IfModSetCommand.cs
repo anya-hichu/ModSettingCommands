@@ -13,7 +13,7 @@ namespace ModSettingCommands.Commands;
 
 public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, ChatServer chatServer, ICommandManager commandManager, IDalamudPluginInterface pluginInterface, IPluginLog pluginLog) : BaseModSetCommand(COMMAND, COMMAND_HELP_MESSAGE, commandManager, pluginInterface)
 {
-    private static readonly int DEFAULT_MESSAGE_INTERVAL_MS = 20;
+    private static readonly int DEFAULT_MESSAGE_INTERVAL_MS = 60;
 
     private static readonly string OPEN_TAG = "<";
     private static readonly string CLOSE_TAG = ">";
