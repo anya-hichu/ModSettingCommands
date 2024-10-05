@@ -121,7 +121,7 @@ public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, IC
                                     var unescapedCommand = UnescapePlaceholders(commandArg);
                                     var waitTimeMatch = WaitTimeGeneratedRegex().Match(unescapedCommand);
                                     var commandWithoutWait = waitTimeMatch.Success ? WaitTimeGeneratedRegex().Replace(unescapedCommand, string.Empty) : unescapedCommand;
-a
+
                                     if (flags.Contains(VERBOSE_FLAG) || isDryRun)
                                     {
                                         ChatGui.Print(commandWithoutWait);
