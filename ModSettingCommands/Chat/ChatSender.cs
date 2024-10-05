@@ -1,16 +1,22 @@
 using Dalamud.Plugin.Services;
-using ModSettingCommands.Utils;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ModSettingCommands.Chat;
 
 public class ChatSender : IDisposable
 {
+    private class Payload(string message, TaskCompletionSource completion)
+    {
+        public string Message { get; init; } = message;
+        public TaskCompletionSource Completion { get; init; } = completion;
+    }
+
     private ChatServer ChatServer { get; init; }
     private IFramework Framework { get; init; }
     public IPluginLog PluginLog { get; init; }
-    private Queue<string> Messages { get; init; } = [];
+    private Queue<Payload> PendingPayloads { get; init; } = [];
 
     public ChatSender(ChatServer chatServer, IFramework framework, IPluginLog pluginLog)
     {
@@ -26,17 +32,21 @@ public class ChatSender : IDisposable
         Framework.Update -= OnFrameworkUpdate;
     }
 
-    public void Enqueue(string message)
+    public Task SendOnFrameworkThread(string message)
     {
-        Messages.Enqueue(message);
+        var completion = new TaskCompletionSource();
+        PendingPayloads.Enqueue(new(message, completion));
+        return completion.Task;
     }
 
     private void OnFrameworkUpdate(IFramework framework)
     {
-        while (Messages.TryDequeue(out var message))
+        while (PendingPayloads.TryDequeue(out var payload))
         {
+            var message = payload.Message;
             ChatServer.SendMessage(message);
             PluginLog.Verbose($"Sent chat message: '{message}'");
+            payload.Completion.SetResult();
         }
     }
 }

@@ -11,7 +11,7 @@ using ModSettingCommands.Chat;
 
 namespace ModSettingCommands.Commands;
 
-public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, ChatServer chatServer, ICommandManager commandManager, IDalamudPluginInterface pluginInterface, IPluginLog pluginLog) : BaseModSetCommand(COMMAND, COMMAND_HELP_MESSAGE, commandManager, pluginInterface)
+public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, ICommandManager commandManager, IDalamudPluginInterface pluginInterface, IPluginLog pluginLog) : BaseModSetCommand(COMMAND, COMMAND_HELP_MESSAGE, commandManager, pluginInterface)
 {
     private static readonly int DEFAULT_MESSAGE_INTERVAL_MS = 60;
 
@@ -28,10 +28,10 @@ public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, Ch
     private static partial Regex WaitTimeGeneratedRegex();
 
     private static readonly string COMMAND = "/ifmodset";
-    private static readonly string COMMAND_HELP_MESSAGE = $"Usage: {COMMAND} (-?|-!|-$|-e)? [Collection Name or Guid] [Mod Directory] [Mod Name]( [Setting Name] ==( [Setting Value])*)? ;( [Command])+";
+    private static readonly string COMMAND_HELP_MESSAGE = $"Usage: {COMMAND} -(?|!|$|e) [Collection Name or Guid] [Mod Directory] [Mod Name]( [Setting Name] ==( [Setting Value])*)?( ;( [Command])*)?";
 
-    private static readonly char DRY_RUN_FLAG = '!';
     private static readonly char VERBOSE_FLAG = '?';
+    private static readonly char DRY_RUN_FLAG = '!';
     private static readonly char ABORT_FLAG = '$';
     private static readonly char ENABLED_FLAG = 'e';
     private static readonly HashSet<char> KNOWN_FLAGS = [DRY_RUN_FLAG, VERBOSE_FLAG, ABORT_FLAG, ENABLED_FLAG];
@@ -40,7 +40,6 @@ public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, Ch
 
     private IChatGui ChatGui { get; init; } = chatGui;
     private ChatSender ChatSender { get; init; } = chatSender;
-    private ChatServer ChatServer { get; init; } = chatServer;
     private IPluginLog PluginLog { get; init; } = pluginLog;
 
     protected override void Handler(string command, string args)
@@ -52,19 +51,17 @@ public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, Ch
         var separatorIndex = nonFlagArgs.IndexOf(";");
 
         var flags = flagArgs.SelectMany(a => a[1..].ToCharArray()).ToHashSet();
-        if (separatorIndex == -1 || flags.Except(KNOWN_FLAGS).Any())
+        if (flags.Except(KNOWN_FLAGS).Any())
         {
             ChatGui.PrintError(CommandHelpMessage);
             return;
         }
 
-        var conditionArgs = nonFlagArgs[..separatorIndex];
-        var commandArgs = nonFlagArgs[(separatorIndex + 1)..];
+        var conditionArgs = separatorIndex == -1 ? nonFlagArgs : nonFlagArgs[..separatorIndex];
+        var commandArgs = separatorIndex == -1 ? [] : nonFlagArgs[(separatorIndex + 1)..];
+
         var noSettingArgs = conditionArgs.Count == 3;
-
-        PluginLog.Verbose($"noSettingArgs: {noSettingArgs}, flags: {string.Join("|", flags)}, conditionArgs: {string.Join("|", conditionArgs)}, commandArgs: {string.Join("|", commandArgs)}");
-
-        if ((noSettingArgs || (conditionArgs.Count >= 5 && conditionArgs[4] == "==")) && commandArgs.Count > 0)
+        if ((noSettingArgs || (conditionArgs.Count >= 5 && conditionArgs[4] == "==")))
         {
             var collectionNameOrGuid = conditionArgs[0];
             var modDir = conditionArgs[1];
@@ -101,31 +98,30 @@ public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, Ch
                             match &= enabled;
                         }
 
-                        if (match)
+                        Task.Run(() =>
                         {
-                            var isDryRun = flags.Contains(DRY_RUN_FLAG);
-                            if (flags.Contains(ABORT_FLAG))
+                            if (match)
                             {
-                                if (flags.Contains(VERBOSE_FLAG) || isDryRun)
+                                var isDryRun = flags.Contains(DRY_RUN_FLAG);
+                                if (flags.Contains(ABORT_FLAG))
                                 {
-                                    ChatGui.Print(ABORT_COMMAND);
+                                    if (flags.Contains(VERBOSE_FLAG) || isDryRun)
+                                    {
+                                        ChatGui.Print(ABORT_COMMAND);
+                                    }
+
+                                    if (!isDryRun)
+                                    {
+                                        Task.WaitAny(ChatSender.SendOnFrameworkThread(ABORT_COMMAND));
+                                    }
                                 }
 
-                                if (!isDryRun)
-                                {
-                                    ChatServer.SendMessage(ABORT_COMMAND);
-                                }
-                            }
-
-                            Task.Run(() =>
-                            {
                                 foreach (var commandArg in commandArgs)
                                 {
                                     var unescapedCommand = UnescapePlaceholders(commandArg);
-                                    PluginLog.Debug($"Executing '{unescapedCommand}'");
                                     var waitTimeMatch = WaitTimeGeneratedRegex().Match(unescapedCommand);
                                     var commandWithoutWait = waitTimeMatch.Success ? WaitTimeGeneratedRegex().Replace(unescapedCommand, string.Empty) : unescapedCommand;
-                                   
+a
                                     if (flags.Contains(VERBOSE_FLAG) || isDryRun)
                                     {
                                         ChatGui.Print(commandWithoutWait);
@@ -133,7 +129,7 @@ public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, Ch
 
                                     if (!isDryRun)
                                     {
-                                        ChatSender.Enqueue(commandWithoutWait);
+                                        Task.WaitAny(ChatSender.SendOnFrameworkThread(commandWithoutWait));
                                     }
 
                                     if (waitTimeMatch.Success)
@@ -141,14 +137,14 @@ public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, Ch
                                         var waitTimeValue = waitTimeMatch.Groups[1].Value;
                                         PluginLog.Verbose($"Pausing execution #{Task.CurrentId} after '{commandWithoutWait}' for {waitTimeValue} sec(s)");
                                         Thread.Sleep(int.Parse(waitTimeValue) * 1000);
-                                    } 
+                                    }
                                     else
                                     {
                                         Thread.Sleep(DEFAULT_MESSAGE_INTERVAL_MS);
                                     }
                                 }
-                            });
-                        }
+                            }
+                        });
                     }
                 }
                 else
@@ -169,6 +165,8 @@ public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, Ch
 
     private static string UnescapePlaceholders(string message)
     {
-        return CloseEscapedTagGeneratedRegex().Replace(OpenEscapedTagGeneratedRegex().Replace(message, OPEN_TAG), CLOSE_TAG).Replace("[[", "[").Replace("]]", "]");
+        return CloseEscapedTagGeneratedRegex()
+            .Replace(OpenEscapedTagGeneratedRegex().Replace(message, OPEN_TAG), CLOSE_TAG)
+            .Replace("[[", "[").Replace("]]", "]");
     }
 }

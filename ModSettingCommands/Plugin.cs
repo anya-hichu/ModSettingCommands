@@ -26,7 +26,7 @@ public sealed class Plugin : IDalamudPlugin
         var chatServer = new ChatServer(SigScanner);
         ChatSender = new(chatServer, Framework, PluginLog);
         ModSetCommand = new(ChatGui, CommandManager, PluginInterface, PluginLog);
-        IfModSetCommand = new(ChatGui, ChatSender, chatServer, CommandManager, PluginInterface, PluginLog);
+        IfModSetCommand = new(ChatGui, ChatSender, CommandManager, PluginInterface, PluginLog);
 
         PluginInterface.UiBuilder.OpenConfigUi += Noop;
         PluginInterface.UiBuilder.OpenMainUi += Noop;
