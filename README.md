@@ -1,5 +1,7 @@
 # ModSettingCommands
 
+Commands to modify penumbra mod settings with an intuitive programming syntax.
+
 Installable using my custom repository (instructions here: https://github.com/anya-hichu/DalamudPluginRepo) or from compiled archives.
 
 ## Modset command
