@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Threading;
 using ModSettingCommands.Chat;
+using Penumbra.Api.IpcSubscribers;
+using Penumbra.Api.Enums;
 
 namespace ModSettingCommands.Commands;
 
@@ -41,6 +43,7 @@ public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, IC
     private IChatGui ChatGui { get; init; } = chatGui;
     private ChatSender ChatSender { get; init; } = chatSender;
     private IPluginLog PluginLog { get; init; } = pluginLog;
+    private GetCurrentModSettings GetCurrentModSettings { get; init; } = new(pluginInterface);
 
     protected override void Handler(string command, string args)
     {
@@ -71,7 +74,7 @@ public partial class IfModSetCommand(IChatGui chatGui, ChatSender chatSender, IC
             {
                 var collectionGuid = ParseOrRetrieveCollectionGuid(collectionNameOrGuid);
 
-                var output = GetCurrentModSettings.InvokeFunc(collectionGuid, modDir, modName, true);
+                var output = GetCurrentModSettings.Invoke(collectionGuid, modDir, modName, true);
                 var outputErrorCode = output.Item1;
 
                 if (outputErrorCode == PenumbraApiEc.Success)

@@ -4,7 +4,6 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using ModSettingCommands.Chat;
 using ModSettingCommands.Commands;
-using ModSettingCommands.Utils;
 
 namespace ModSettingCommands;
 
@@ -23,8 +22,7 @@ public sealed class Plugin : IDalamudPlugin
 
     public Plugin()
     {
-        var chatServer = new ChatServer(SigScanner);
-        ChatSender = new(chatServer, Framework, PluginLog);
+        ChatSender = new(new(SigScanner), Framework, PluginLog);
         ModSetCommand = new(ChatGui, CommandManager, PluginInterface, PluginLog);
         IfModSetCommand = new(ChatGui, ChatSender, CommandManager, PluginInterface, PluginLog);
 

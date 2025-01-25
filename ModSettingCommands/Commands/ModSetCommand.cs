@@ -1,7 +1,8 @@
 using Dalamud.Plugin;
-using Dalamud.Plugin.Ipc;
 using Dalamud.Plugin.Services;
 using ModSettingCommands.Utils;
+using Penumbra.Api.Enums;
+using Penumbra.Api.IpcSubscribers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +16,9 @@ public class ModSetCommand(IChatGui chatGui, ICommandManager commandManager, IDa
 
     private IChatGui ChatGui { get; init; } = chatGui;
     private IPluginLog PluginLog { get; init; } = pluginLog;
-    private ICallGateSubscriber<Guid, string, string, string, string, int> TrySetModSettingSubscriber { get; init; } = pluginInterface.GetIpcSubscriber<Guid, string, string, string, string, int>("Penumbra.TrySetModSetting.V5");
-    private ICallGateSubscriber<Guid, string, string, string, IReadOnlyList<string>, int> TrySetModSettingsSubscriber { get; init; } = pluginInterface.GetIpcSubscriber<Guid, string, string, string, IReadOnlyList<string>, int>("Penumbra.TrySetModSettings.V5");
+    private TrySetModSetting TrySetModSetting { get; init; } = new(pluginInterface);
+    private TrySetModSettings TrySetModSettings { get; init; } = new(pluginInterface);
+    private GetCurrentModSettings GetCurrentModSettings { get; init; } = new(pluginInterface);
 
     protected override void Handler(string command, string args)
     {
@@ -42,17 +44,17 @@ public class ModSetCommand(IChatGui chatGui, ICommandManager commandManager, IDa
                     // Stateless
                     if (settingValueOrValues.Length != 1)
                     {
-                        errorCode = (PenumbraApiEc)TrySetModSettingsSubscriber.InvokeFunc(collectionGuid, modDir, modName, settingName, settingValueOrValues);
+                        errorCode = TrySetModSettings.Invoke(collectionGuid, modDir, settingName, settingValueOrValues.AsReadOnly(), modName);
                     }
                     else
                     {
-                        errorCode = (PenumbraApiEc)TrySetModSettingSubscriber.InvokeFunc(collectionGuid, modDir, modName, settingName, settingValueOrValues[0]);
+                        errorCode = TrySetModSetting.Invoke(collectionGuid, modDir, settingName, settingValueOrValues[0], modName);
                     }
                 }
                 else if (isUnionOperator || isExceptOperator)
                 {
                     // Stateful
-                    var output = GetCurrentModSettings.InvokeFunc(collectionGuid, modDir, modName, true);
+                    var output = GetCurrentModSettings.Invoke(collectionGuid, modDir, modName, true);
                     var outputErrorCode = output.Item1;
                     if (outputErrorCode == PenumbraApiEc.Success)
                     {
@@ -71,7 +73,7 @@ public class ModSetCommand(IChatGui chatGui, ICommandManager commandManager, IDa
                             {
                                 newSettings = currentSettingValues.Except(settingValueOrValues).ToList();
                             }
-                            errorCode = (PenumbraApiEc)TrySetModSettingsSubscriber.InvokeFunc(collectionGuid, modDir, modName, settingName, newSettings);
+                            errorCode = TrySetModSettings.Invoke(collectionGuid, modDir, settingName, newSettings, modName);
                         }
                         else
                         {
