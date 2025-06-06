@@ -23,16 +23,16 @@ Unset all options in group:
 
 #### Stateful
 
-##### Set option in group
+##### Add option in group
 `/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack += "032 [OCN] Click Click Flash (Hdance)"`
 
-##### Set options in group
+##### Add options in group
 `/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack += "032 [OCN] Click Click Flash (Hdance)" "033 [ChaotixFox] RGB Cheering (Cheer-on)"`
 
-##### Unset option in group
+##### Remove option in group
 `/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack -= "032 [OCN] Click Click Flash (Hdance)"`
 
-##### Unset options in group
+##### Remove options in group
 `/modset Self Eorzean-Nightlife-V2 Eorzean-Nightlife-V2 Party-Pack -= "032 [OCN] Click Click Flash (Hdance)" "033 [ChaotixFox] RGB Cheering (Cheer-on)"`
 
 ## Ifmodset command
