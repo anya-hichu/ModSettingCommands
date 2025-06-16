@@ -1,8 +1,207 @@
 # ModSettingCommands
 
-Commands to modify penumbra mod settings with an intuitive programming syntax.
+Commands to interact with penumbra mod settings using an intuitive syntax.
 
 Installable using my custom repository (instructions here: https://github.com/anya-hichu/DalamudPluginRepo) or from compiled archives.
+
+## Msc command
+
+### Help
+
+```
+Usage:
+  /msc [options]
+Options:
+  -h, /h, --help, -?, /? Show help and usage information
+Subcommands:
+  set                  Set group options
+  clear                Clear groups
+  add                  Add group options
+  remove               Remove group options
+  assert               Assert group options
+  tmp                  Temporary operations
+```
+
+### Permanent subcommands
+
+#### Set
+
+```
+Usage:
+  /msc set [options]
+Options:
+  --collection, -c     Collection
+  --mod-dir, -m        Mod directory
+  --mod-name, -n       Mod name (optional)
+  --group, -g          Group
+  --option, -o         Options
+  --inherit, -i        Inherit flag (optional)
+  --priority, -p       Priority (optional)
+  --enabled, -e        Enabled flag (optional)
+```
+
+#### Clear
+
+```
+Usage:
+  /msc clear [options]
+Options:
+  --collection, -c     Collection
+  --mod-dir, -m        Mod directory
+  --mod-name, -n       Mod name (optional)
+  --group, -g          Group
+```
+
+#### Add
+
+```
+Usage:
+  /msc add [options]
+Options:
+  --collection, -c     Collection
+  --mod-dir, -m        Mod directory
+  --mod-name, -n       Mod name (optional)
+  --group, -g          Group
+  --option, -o         Options
+```
+
+#### Remove
+
+```
+Usage:
+  /msc remove [options]
+Options:
+  --collection, -c     Collection
+  --mod-dir, -m        Mod directory
+  --mod-name, -n       Mod name (optional)
+  --group, -g          Group
+  --option, -o         Options
+```
+
+#### Assert
+
+```
+Usage:
+  /msc assert [options]
+Options:
+  --collection, -c     Collection
+  --mod-dir, -m        Mod directory
+  --mod-name, -n       Mod name (optional)
+  --group, -g          Group
+  --option, -o         Options
+  --enabled, -e        Enabled flag (optional)
+  --priority, -p       Priority (optional)
+  --success-cmd, -sc   Success command (optional)
+  --failure-cmd, -fc   Failure command (optional)
+```
+
+### Temporary subcommands
+
+#### Help
+
+```
+Usage:
+  /msc tmp [options]
+Subcommands:
+  set                  Set group options
+  clear                Clear groups
+  add                  Add group options
+  remove               Remove group options
+  assert               Assert group options
+  revert               Revert temporary settings
+```
+
+#### Set
+
+```
+Usage:
+  /msc tmp set [options]
+Options:
+  --collection, -c     Collection
+  --mod-dir, -m        Mod directory
+  --mod-name, -n       Mod name (optional)
+  --group, -g          Group
+  --option, -o         Options
+  --inherit, -i        Inherit flag (optional)
+  --priority, -p       Priority (optional)
+  --enabled, -e        Enabled flag (optional)
+  --key, -k            Key
+  --source, -s         Source
+```
+
+#### Clear
+
+```
+Usage:
+  /msc tmp clear [options]
+Options:
+  --collection, -c     Collection
+  --mod-dir, -m        Mod directory
+  --mod-name, -n       Mod name (optional)
+  --group, -g          Group
+  --key, -k            Key
+  --source, -s         Source
+```
+
+#### Add
+
+```
+Usage:
+  /msc tmp add [options]
+Options:
+  --collection, -c     Collection
+  --mod-dir, -m        Mod directory
+  --mod-name, -n       Mod name (optional)
+  --group, -g          Group
+  --option, -o         Options
+  --key, -k            Key
+  --source, -s         Source
+```
+
+#### Remove
+
+```
+Usage:
+  /msc tmp remove [options]
+Options:
+  --collection, -c     Collection
+  --mod-dir, -m        Mod directory
+  --mod-name, -n       Mod name (optional)
+  --group, -g          Group
+  --option, -o         Options
+  --key, -k            Key
+  --source, -s         Source
+```
+
+#### Assert
+
+```
+Usage:
+  /msc tmp assert [options]
+Options:
+  --collection, -c     Collection
+  --mod-dir, -m        Mod directory
+  --mod-name, -n       Mod name (optional)
+  --group, -g          Group
+  --option, -o         Options
+  --enabled, -e        Enabled flag (optional)
+  --priority, -p       Priority (optional)
+  --success-cmd, -sc   Success command (optional)
+  --failure-cmd, -fc   Failure command (optional)
+  --key, -k            Key
+```
+
+#### Revert
+
+```
+Usage:
+  /msc tmp revert [options]
+Options:
+  --collection, -c     Collection
+  --key, -k            Key
+```
+
+# Deprecated
 
 ## Modset command
 
