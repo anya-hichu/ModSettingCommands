@@ -90,7 +90,7 @@ public partial class MscCmd : BaseModSetCmd
         var modNameOption = new Option<string?>(["--mod-name", "-n"], "Mod name (optional)");
 
         var groupOption = new Option<string>(["--group", "-g"], "Group") { IsRequired = true };
-        var maybeGroupOption = new Option<string?>(["--group (optional)", "-g"], "Group");
+        var maybeGroupOption = new Option<string?>(["--group", "-g"], "Group (optional)");
         var optionsOption = new Option<List<string>>(["--option", "-o"], "Options") { IsRequired = true, AllowMultipleArgumentsPerToken = true, Arity = ArgumentArity.OneOrMore };
         var maybeOptionsOption = new Option<List<string>?>(["--option", "-o"], "Options (optional)") { AllowMultipleArgumentsPerToken = true, Arity = ArgumentArity.OneOrMore };
 
