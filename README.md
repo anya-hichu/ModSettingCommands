@@ -33,8 +33,8 @@ Options:
   --collection, -c     Collection
   --mod-dir, -m        Mod directory
   --mod-name, -n       Mod name (optional)
-  --group, -g          Group
-  --option, -o         Options
+  --group, -g          Group (optional)
+  --option, -o         Options (optional)
   --inherit, -i        Inherit flag (optional)
   --priority, -p       Priority (optional)
   --enabled, -e        Enabled flag (optional)
@@ -87,12 +87,12 @@ Options:
   --collection, -c     Collection
   --mod-dir, -m        Mod directory
   --mod-name, -n       Mod name (optional)
-  --group, -g          Group
-  --option, -o         Options
+  --group, -g          Group (optional)
+  --option, -o         Options (optional)
   --enabled, -e        Enabled flag (optional)
   --priority, -p       Priority (optional)
-  --success-cmd, -sc   Success command (optional)
-  --failure-cmd, -fc   Failure command (optional)
+  --success-cmd, -sc   Success commands (optional)
+  --failure-cmd, -fc   Failure commands (optional)
 ```
 
 ### Temporary subcommands
@@ -120,12 +120,12 @@ Options:
   --collection, -c     Collection
   --mod-dir, -m        Mod directory
   --mod-name, -n       Mod name (optional)
-  --group, -g          Group
-  --option, -o         Options
+  --group, -g          Group (optional)
+  --option, -o         Options (optional)
   --inherit, -i        Inherit flag (optional)
   --priority, -p       Priority (optional)
   --enabled, -e        Enabled flag (optional)
-  --key, -k            Key
+  --key, -k            Key (optional, defaults: 0)
   --source, -s         Source
 ```
 
@@ -139,7 +139,7 @@ Options:
   --mod-dir, -m        Mod directory
   --mod-name, -n       Mod name (optional)
   --group, -g          Group
-  --key, -k            Key
+  --key, -k            Key (optional, defaults: 0)
   --source, -s         Source
 ```
 
@@ -154,7 +154,7 @@ Options:
   --mod-name, -n       Mod name (optional)
   --group, -g          Group
   --option, -o         Options
-  --key, -k            Key
+  --key, -k            Key (optional, defaults: 0)
   --source, -s         Source
 ```
 
@@ -169,7 +169,7 @@ Options:
   --mod-name, -n       Mod name (optional)
   --group, -g          Group
   --option, -o         Options
-  --key, -k            Key
+  --key, -k            Key (optional, defaults: 0)
   --source, -s         Source
 ```
 
@@ -182,13 +182,13 @@ Options:
   --collection, -c     Collection
   --mod-dir, -m        Mod directory
   --mod-name, -n       Mod name (optional)
-  --group, -g          Group
-  --option, -o         Options
+  --group, -g          Group (optional)
+  --option, -o         Options (optional)
   --enabled, -e        Enabled flag (optional)
   --priority, -p       Priority (optional)
-  --success-cmd, -sc   Success command (optional)
-  --failure-cmd, -fc   Failure command (optional)
-  --key, -k            Key
+  --success-cmd, -sc   Success commands (optional)
+  --failure-cmd, -fc   Failure commands (optional)
+  --key, -k            Key (optional, defaults: 0)
 ```
 
 #### Revert

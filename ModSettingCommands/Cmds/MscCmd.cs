@@ -90,24 +90,24 @@ public partial class MscCmd : BaseModSetCmd
         var modNameOption = new Option<string?>(["--mod-name", "-n"], "Mod name (optional)");
 
         var groupOption = new Option<string>(["--group", "-g"], "Group") { IsRequired = true };
-        var maybeGroupOption = new Option<string?>(["--group", "-g"], "Group");
+        var maybeGroupOption = new Option<string?>(["--group (optional)", "-g"], "Group");
         var optionsOption = new Option<List<string>>(["--option", "-o"], "Options") { IsRequired = true, AllowMultipleArgumentsPerToken = true, Arity = ArgumentArity.OneOrMore };
-        var maybeOptionsOption = new Option<List<string>?>(["--option", "-o"], "Options") { AllowMultipleArgumentsPerToken = true, Arity = ArgumentArity.OneOrMore };
+        var maybeOptionsOption = new Option<List<string>?>(["--option", "-o"], "Options (optional)") { AllowMultipleArgumentsPerToken = true, Arity = ArgumentArity.OneOrMore };
 
         var inheritOption = new Option<bool?>(["--inherit", "-i"], "Inherit flag (optional)");
         var priorityOption = new Option<int?>(["--priority", "-p"], "Priority (optional)");
         var enabledOption = new Option<bool?>(["--enabled", "-e"], "Enabled flag (optional)");
 
-        var successCmdsOption = new Option<List<string>>(["--success-cmd", "-sc"], "Success command (optional)") { AllowMultipleArgumentsPerToken = true };
-        var failureCmdsOption = new Option<List<string>>(["--failure-cmd", "-fc"], "Failure command (optional)") { AllowMultipleArgumentsPerToken = true };
+        var successCmdsOption = new Option<List<string>>(["--success-cmd", "-sc"], "Success commands (optional)") { AllowMultipleArgumentsPerToken = true };
+        var failureCmdsOption = new Option<List<string>>(["--failure-cmd", "-fc"], "Failure commands (optional)") { AllowMultipleArgumentsPerToken = true };
 
-        var keyOption = new Option<int?>(["--key", "-k"], "Key");
+        var keyOption = new Option<int?>(["--key", "-k"], "Key (optional, defaults: 0)");
         var sourceOption = new Option<string>(["--source", "-s"], "Source") { IsRequired = true };
 
         var modCmdOptions = new ModCmdOptions(collectionOption, modDirOption, modNameOption);
         var setCmdOptions = new SetCmdOptions(modCmdOptions, maybeGroupOption, maybeOptionsOption, inheritOption, priorityOption, enabledOption);
         rootCommand.AddCommand(new SetCmd(setCmdOptions).Tap(cmd => cmd.SetHandler(
-            HandleSet, 
+            HandleSet,
             new SetCmdBinder<SetCmdArgs>(setCmdOptions)
         )));
         var clearCmdOptions = new ClearCmdOptions(modCmdOptions, groupOption);
