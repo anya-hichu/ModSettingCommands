@@ -1,8 +1,8 @@
 {
   "Author": "Anya Hichu",
   "Name": "ModSettingCommands",
-  "Punchline": "Update mod settings using command",
-  "Description": "Provides /modset command to update penumbra mod settings",
+  "Punchline": "Automate all the things!",
+  "Description": "Provides commands to interact with penumbra mod settings",
   "ApplicableVersion": "any",
   "Tags": [
     "penumbra",
