@@ -7,10 +7,6 @@
     <IsPackable>false</IsPackable>
     <TargetFramework>net9.0-windows7.0</TargetFramework>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Cmds\Msc\Builders\**" />
-    <EmbeddedResource Remove="Cmds\Msc\Builders\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
@@ -18,5 +14,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Penumbra.Api\Penumbra.Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Ipc\" />
   </ItemGroup>
 </Project>

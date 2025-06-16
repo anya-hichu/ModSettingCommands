@@ -3,7 +3,7 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using ModSettingCommands.Chat;
-using ModSettingCommands.Commands;
+using ModSettingCommands.Cmds;
 
 namespace ModSettingCommands;
 
@@ -17,25 +17,23 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] internal static IFramework Framework { get; private set; } = null!;
 
     private ChatSender ChatSender { get; init; }
-    private ModSetCommand ModSetCommand { get; init; }
-    private IfModSetCommand IfModSetCommand { get; init; }
+    private ModSetCmd ModSetCmd { get; init; }
+    private IfModSetCmd IfModSetCmd { get; init; }
+    private MscCmd MscCmd { get; init; }
 
     public Plugin()
     {
         ChatSender = new(new(SigScanner), Framework, PluginLog);
-        ModSetCommand = new(ChatGui, CommandManager, PluginInterface, PluginLog);
-        IfModSetCommand = new(ChatGui, ChatSender, CommandManager, PluginInterface, PluginLog);
-
-        PluginInterface.UiBuilder.OpenConfigUi += Noop;
-        PluginInterface.UiBuilder.OpenMainUi += Noop;
+        ModSetCmd = new(ChatGui, CommandManager, PluginInterface, PluginLog);
+        IfModSetCmd = new(ChatGui, ChatSender, CommandManager, PluginInterface, PluginLog);
+        MscCmd = new(ChatGui, ChatSender, CommandManager, PluginInterface, PluginLog);
     }
 
     public void Dispose()
     {
-        IfModSetCommand.Dispose();
-        ModSetCommand.Dispose();
+        IfModSetCmd.Dispose();
+        ModSetCmd.Dispose();
         ChatSender.Dispose();
+        MscCmd.Dispose();
     }
-
-    private static void Noop() { }
 }
