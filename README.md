@@ -30,7 +30,7 @@ Subcommands:
 Usage:
   /msc set [options]
 Options:
-  --collection, -c     Collection
+  --collection, -c     Collection (optional, defaults: current active)
   --mod-dir, -m        Mod directory
   --mod-name, -n       Mod name (optional)
   --group, -g          Group (optional)
@@ -46,7 +46,7 @@ Options:
 Usage:
   /msc clear [options]
 Options:
-  --collection, -c     Collection
+  --collection, -c     Collection (optional, defaults: current active)
   --mod-dir, -m        Mod directory
   --mod-name, -n       Mod name (optional)
   --group, -g          Group
@@ -58,7 +58,7 @@ Options:
 Usage:
   /msc add [options]
 Options:
-  --collection, -c     Collection
+  --collection, -c     Collection (optional, defaults: current active)
   --mod-dir, -m        Mod directory
   --mod-name, -n       Mod name (optional)
   --group, -g          Group
@@ -71,7 +71,7 @@ Options:
 Usage:
   /msc remove [options]
 Options:
-  --collection, -c     Collection
+  --collection, -c     Collection (optional, defaults: current active)
   --mod-dir, -m        Mod directory
   --mod-name, -n       Mod name (optional)
   --group, -g          Group
@@ -84,7 +84,7 @@ Options:
 Usage:
   /msc assert [options]
 Options:
-  --collection, -c     Collection
+  --collection, -c     Collection (optional, defaults: current active)
   --mod-dir, -m        Mod directory
   --mod-name, -n       Mod name (optional)
   --group, -g          Group (optional)
@@ -117,7 +117,7 @@ Subcommands:
 Usage:
   /msc tmp set [options]
 Options:
-  --collection, -c     Collection
+  --collection, -c     Collection (optional, defaults: current active)
   --mod-dir, -m        Mod directory
   --mod-name, -n       Mod name (optional)
   --group, -g          Group (optional)
@@ -135,7 +135,7 @@ Options:
 Usage:
   /msc tmp clear [options]
 Options:
-  --collection, -c     Collection
+  --collection, -c     Collection (optional, defaults: current active)
   --mod-dir, -m        Mod directory
   --mod-name, -n       Mod name (optional)
   --group, -g          Group
@@ -149,7 +149,7 @@ Options:
 Usage:
   /msc tmp add [options]
 Options:
-  --collection, -c     Collection
+  --collection, -c     Collection (optional, defaults: current active)
   --mod-dir, -m        Mod directory
   --mod-name, -n       Mod name (optional)
   --group, -g          Group
@@ -164,7 +164,7 @@ Options:
 Usage:
   /msc tmp remove [options]
 Options:
-  --collection, -c     Collection
+  --collection, -c     Collection (optional, defaults: current active)
   --mod-dir, -m        Mod directory
   --mod-name, -n       Mod name (optional)
   --group, -g          Group
@@ -179,7 +179,7 @@ Options:
 Usage:
   /msc tmp assert [options]
 Options:
-  --collection, -c     Collection
+  --collection, -c     Collection (optional, defaults: current active)
   --mod-dir, -m        Mod directory
   --mod-name, -n       Mod name (optional)
   --group, -g          Group (optional)
@@ -197,7 +197,7 @@ Options:
 Usage:
   /msc tmp revert [options]
 Options:
-  --collection, -c     Collection
+  --collection, -c     Collection (optional, defaults: current active)
   --key, -k            Key
 ```
 

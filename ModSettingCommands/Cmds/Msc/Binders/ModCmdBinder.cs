@@ -10,7 +10,7 @@ public abstract class ModCmdBinder<T>(ModCmdOptions options) : BinderBase<T> whe
     {
         return new T
         {
-            Collection = context.ParseResult.GetValueForOption(options.Collection)!,
+            Collection = context.ParseResult.GetValueForOption(options.Collection),
             ModDir = context.ParseResult.GetValueForOption(options.ModDir)!,
             ModName = context.ParseResult.GetValueForOption(options.ModName)
         };

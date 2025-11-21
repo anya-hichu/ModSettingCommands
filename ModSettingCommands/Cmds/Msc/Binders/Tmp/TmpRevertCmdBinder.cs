@@ -11,7 +11,7 @@ public class TmpRevertCmdBinder(TmpRevertCmdOptions options) : BinderBase<TmpRev
     {
         return new TmpRevertCmdArgs()
         {
-            Collection = context.ParseResult.GetValueForOption(options.Collection)!,
+            Collection = context.ParseResult.GetValueForOption(options.Collection),
             Key = context.ParseResult.GetValueForOption(options.Key)
         };
     }

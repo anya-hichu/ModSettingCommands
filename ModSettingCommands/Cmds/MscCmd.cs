@@ -59,7 +59,7 @@ public partial class MscCmd : BaseModSetCmd
     private TrySetModSettings TrySetModSettings { get; init; }
     
 
-
+    private GetCollectionForObject GetCollectionForObject { get; init; }
     private SetTemporaryModSettings SetTemporaryModSettings { get; init; }
     private RemoveAllTemporaryModSettings RemoveAllTemporaryModSettings { get; init; }
 
@@ -67,25 +67,22 @@ public partial class MscCmd : BaseModSetCmd
 
     public MscCmd(IChatGui chatGui, ChatSender chatSender, ICommandManager commandManager, IDalamudPluginInterface pluginInterface, IPluginLog pluginLog) : base(COMMAND, COMMAND_HELP_MESSAGE, chatGui, commandManager, pluginInterface)
     {
-        ChatGui = chatGui;
         ChatGuiConsole = new(chatGui);
         ChatSender = chatSender;
-        CommandManager = commandManager;
         PluginLog = pluginLog;
 
         GetCurrentModSettingsWithTemp = new(pluginInterface);
-
         TrySetMod = new(pluginInterface);
         TrySetModPriority = new(pluginInterface);
         TrySetModSettings = new(pluginInterface);
-        
 
+        GetCollectionForObject = new(pluginInterface);
         SetTemporaryModSettings = new(pluginInterface);
         RemoveAllTemporaryModSettings = new(pluginInterface);
 
         var rootCommand = new Command(COMMAND, "Utility to work with mod settings");
 
-        var collectionOption = new Option<string>(["--collection", "-c"], "Collection") { IsRequired = true };
+        var collectionOption = new Option<string?>(["--collection", "-c"], "Collection (optional, defaults: current active)");
         var modDirOption = new Option<string>(["--mod-dir", "-m"], "Mod directory") { IsRequired = true };
         var modNameOption = new Option<string?>(["--mod-name", "-n"], "Mod name (optional)");
 
@@ -223,9 +220,9 @@ public partial class MscCmd : BaseModSetCmd
         }
     }
 
-    private bool TryUpdateSetting(string collection, string modDir, string? modName, bool? enabled, int? priority, string? group, Func<List<string>, List<string>>? transform)
+    private bool TryUpdateSetting(string? collection, string modDir, string? modName, bool? enabled, int? priority, string? group, Func<List<string>, List<string>>? transform)
     {
-        if (!TryGetCollectionId(collection, out var collectionId))
+        if (!TryResolveCollection(collection, out var collectionId))
         {
             return false;
         }
@@ -283,7 +280,7 @@ public partial class MscCmd : BaseModSetCmd
     private void HandleAssert(AssertCmdArgs args)
     {
         PluginLog.Debug($"{nameof(HandleAssert)} called with {args}");
-        if (!TryGetCollectionId(args.Collection, out var collectionId))
+        if (!TryResolveCollection(args.Collection, out var collectionId))
         {
             return;
         }
@@ -353,9 +350,9 @@ public partial class MscCmd : BaseModSetCmd
         }
     }
 
-    private bool TryUpdateTmpSetting(string collection, string modDir, string? modName, bool? enabled, int? priority, string? group, int? key, string source, Func<List<string>, List<string>>? transform)
+    private bool TryUpdateTmpSetting(string? collection, string modDir, string? modName, bool? enabled, int? priority, string? group, int? key, string source, Func<List<string>, List<string>>? transform)
     {
-        if (!TryGetCollectionId(collection, out var collectionId))
+        if (!TryResolveCollection(collection, out var collectionId))
         {
             return false;
         }
@@ -384,7 +381,7 @@ public partial class MscCmd : BaseModSetCmd
     private void HandleTmpAssert(TmpAssertCmdArgs args)
     {
         PluginLog.Debug($"{nameof(HandleTmpAssert)} called with {args}");
-        if (!TryGetCollectionId(args.Collection, out var collectionId))
+        if (!TryResolveCollection(args.Collection, out var collectionId))
         {
             return;
         }
@@ -423,7 +420,8 @@ public partial class MscCmd : BaseModSetCmd
     private void HandleTmpRevert(TmpRevertCmdArgs args)
     {
         PluginLog.Debug($"{nameof(HandleTmpRevert)} called with {args}");
-        if (!TryGetCollectionId(args.Collection, out var collectionId))
+
+        if (!TryResolveCollection(args.Collection, out var collectionId))
         {
             return;
         }
@@ -468,7 +466,7 @@ public partial class MscCmd : BaseModSetCmd
                 if (waitTimeMatch.Success)
                 {
                     var waitTimeValue = waitTimeMatch.Groups[1].Value;
-                    PluginLog.Verbose($"Pausing execution #{Task.CurrentId} after '{cmdWithoutWait}' for {waitTimeValue} sec(s)");
+                    PluginLog.Debug($"Pausing execution #{Task.CurrentId} after '{cmdWithoutWait}' for {waitTimeValue} sec(s)");
                     Thread.Sleep(int.Parse(waitTimeValue) * 1000);
                 }
                 else
@@ -477,5 +475,22 @@ public partial class MscCmd : BaseModSetCmd
                 }
             }
         }, token);
+    }
+
+    private bool TryResolveCollection(string? collection, out Guid collectionId)
+    {
+        collectionId = default;
+        if (collection == null)
+        {
+            (var objectValid, var _, (var id, var name)) = GetCollectionForObject.Invoke(0);
+            if (!objectValid) return false;
+
+            collectionId = id;
+            PluginLog.Debug($"Resolved to active collection [{id}] with name [{name}]");
+            return true;
+        }
+
+        if (TryGetCollectionId(collection, out collectionId)) return true;
+        return false;
     }
 }

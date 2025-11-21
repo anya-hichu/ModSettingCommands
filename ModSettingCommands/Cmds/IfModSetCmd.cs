@@ -144,7 +144,7 @@ public partial class IfModSetCmd(
                             if (waitTimeMatch.Success)
                             {
                                 var waitTimeValue = waitTimeMatch.Groups[1].Value;
-                                PluginLog.Verbose($"Pausing execution #{Task.CurrentId} after '{commandWithoutWait}' for {waitTimeValue} sec(s)");
+                                PluginLog.Debug($"Pausing execution #{Task.CurrentId} after '{commandWithoutWait}' for {waitTimeValue} sec(s)");
                                 Thread.Sleep(int.Parse(waitTimeValue) * 1000);
                             }
                             else
