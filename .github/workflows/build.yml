@@ -14,7 +14,7 @@ jobs:
       DALAMUD_ARCHIVE_URL: ${{ vars.DALAMUD_ARCHIVE_URL || 'https://goatcorp.github.io/dalamud-distrib/latest.zip' }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 
@@ -35,7 +35,7 @@ jobs:
         run: dotnet build --configuration Release ModSettingCommands/ModSettingCommands.csproj
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: ModSettingCommands
           path: |
