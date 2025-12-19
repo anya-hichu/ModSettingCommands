@@ -222,16 +222,11 @@ public partial class MscCmd : BaseModSetCmd
 
     private bool TryUpdateSetting(string? collection, string modDir, string? modName, bool? enabled, int? priority, string? group, Func<List<string>, List<string>>? transform)
     {
-        if (!TryResolveCollection(collection, out var collectionId))
-        {
-            return false;
-        }
+        if (!TryResolveCollection(collection, out var collectionId)) return false;
 
         var (ec1, data) = GetCurrentModSettingsWithTemp.Invoke(collectionId, modDir, modName ?? string.Empty, true, true);
-        if (CheckError(ec1))
-        {
-            return false;
-        }
+        if (OnError(ec1)) return false;
+
         if (!data.HasValue)
         {
             PluginLog.Warning($"Failed to retrieve mod settings for {modDir} in collection {collection} using defaults instead");
@@ -243,20 +238,14 @@ public partial class MscCmd : BaseModSetCmd
         if (enabled.HasValue)
         {
             var ec2 = TrySetMod.Invoke(collectionId, modDir, enabled.Value, modName ?? string.Empty);
-            if (CheckError(ec2))
-            {
-                return false;
-            }
+            if (OnError(ec2)) return false;
         }
 
 
         if (priority.HasValue)
         {
             var ec3 = TrySetModPriority.Invoke(collectionId, modDir, priority.Value, modName ?? string.Empty);
-            if (CheckError(ec3))
-            {
-                return false;
-            }
+            if (OnError(ec3)) return false;
         }
 
         if (group != null)
@@ -268,10 +257,7 @@ public partial class MscCmd : BaseModSetCmd
             }
 
             var ec4 = TrySetModSettings.Invoke(collectionId, modDir, group, transform != null ? transform(options!) : options!, modName ?? string.Empty);
-            if (CheckError(ec4))
-            {
-                return false;
-            }
+            if (OnError(ec4)) return false;
         }
 
         return true;
@@ -285,10 +271,7 @@ public partial class MscCmd : BaseModSetCmd
             return;
         }
         var (ec1, data) = GetCurrentModSettingsWithTemp.Invoke(collectionId, args.ModDir, args.ModName ?? string.Empty, true, true);
-        if (CheckError(ec1))
-        {
-            return;
-        }
+        if (OnError(ec1)) return;
 
         if (!data.HasValue)
         {
@@ -352,16 +335,11 @@ public partial class MscCmd : BaseModSetCmd
 
     private bool TryUpdateTmpSetting(string? collection, string modDir, string? modName, bool? enabled, int? priority, string? group, int? key, string source, Func<List<string>, List<string>>? transform)
     {
-        if (!TryResolveCollection(collection, out var collectionId))
-        {
-            return false;
-        }
+        if (!TryResolveCollection(collection, out var collectionId)) return false;
 
         var (ec1, data) = GetCurrentModSettingsWithTemp.Invoke(collectionId, modDir, modName ?? string.Empty, false, false, key ?? 0);
-        if (CheckError(ec1))
-        {
-            return false;
-        }
+        if (OnError(ec1)) return false;
+
         if (!data.HasValue)
         {
             PluginLog.Warning($"Failed to retrieve mod settings for {modDir} in collection {collection} using defaults instead");
@@ -370,27 +348,18 @@ public partial class MscCmd : BaseModSetCmd
         var (currentEnabled, currentPriority, currentSettings, _, _) = data.Value;
         var settings = currentSettings.ToDictionary(setting => setting.Key, setting => (IReadOnlyList<string>)(transform != null && setting.Key == group ? transform(setting.Value) : setting.Value)).AsReadOnly();
         var ec2 = SetTemporaryModSettings.Invoke(collectionId, modDir, false, enabled.HasValue ? enabled.Value : currentEnabled, priority.HasValue ? priority.Value : currentPriority, settings, source, key ?? 0, modName ?? string.Empty);
-        if (CheckError(ec2))
-        {
-            return false;
-        }
 
-        return true;
+        return !OnError(ec2);
     }
 
     private void HandleTmpAssert(TmpAssertCmdArgs args)
     {
         PluginLog.Debug($"{nameof(HandleTmpAssert)} called with {args}");
-        if (!TryResolveCollection(args.Collection, out var collectionId))
-        {
-            return;
-        }
+        if (!TryResolveCollection(args.Collection, out var collectionId)) return;
+
         var (ec1, data) = GetCurrentModSettingsWithTemp.Invoke(collectionId, args.ModDir, args.ModName ?? string.Empty, false, false, args.Key ?? 0);
 
-        if (CheckError(ec1))
-        {
-            return;
-        }
+        if (OnError(ec1)) return;
 
         if (!data.HasValue)
         {
@@ -421,23 +390,14 @@ public partial class MscCmd : BaseModSetCmd
     {
         PluginLog.Debug($"{nameof(HandleTmpRevert)} called with {args}");
 
-        if (!TryResolveCollection(args.Collection, out var collectionId))
-        {
-            return;
-        }
+        if (!TryResolveCollection(args.Collection, out var collectionId)) return;
         var ec = RemoveAllTemporaryModSettings.Invoke(collectionId, args.Key ?? 0);
-        if (CheckError(ec))
-        {
-            return;
-        }
+        OnError(ec);
     }
 
-    private bool CheckError(PenumbraApiEc exitCode)
+    private bool OnError(PenumbraApiEc exitCode)
     {
-        if (exitCode == PenumbraApiEc.Success || exitCode == PenumbraApiEc.NothingChanged)
-        {
-            return false;
-        }
+        if (exitCode == PenumbraApiEc.Success || exitCode == PenumbraApiEc.NothingChanged) return false;
         ChatGui.PrintError($"Failed with error code '{exitCode}'");
         return true;
     }
@@ -480,17 +440,18 @@ public partial class MscCmd : BaseModSetCmd
     private bool TryResolveCollection(string? collection, out Guid collectionId)
     {
         collectionId = default;
-        if (collection == null)
-        {
-            (var objectValid, var _, (var id, var name)) = GetCollectionForObject.Invoke(0);
-            if (!objectValid) return false;
+        if (collection != null && TryGetCollectionId(collection, out collectionId)) return true;
 
-            collectionId = id;
-            PluginLog.Debug($"Resolved to active collection [{id}] with name [{name}]");
-            return true;
+        // Defaults to current active collection
+        (var objectValid, var _, (var id, var name)) = GetCollectionForObject.Invoke(0);
+        if (!objectValid)
+        {
+            ChatGui.PrintError($"Failed with identify active collection for current character");
+            return false;
         }
 
-        if (TryGetCollectionId(collection, out collectionId)) return true;
-        return false;
+        collectionId = id;
+        PluginLog.Debug($"Resolved active collection [{id}] with name [{name}]");
+        return true;
     }
 }
